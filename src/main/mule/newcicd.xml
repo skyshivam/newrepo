@@ -1,14 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="487c4d42-2f80-4e78-b9d7-ff1b1e8680fb" >
-		<http:listener-connection host="0.0.0.0" port="8081" />
-	</http:listener-config>
-	<flow name="newcicdFlow" doc:id="3e3343a5-5ca6-4fa2-943b-95fffff6e974" >
-		<http:listener doc:name="Listener" doc:id="dcd94ed3-e485-49c4-baa1-38b71cc75bec" config-ref="HTTP_Listener_config" path="/cic"/>
-		<set-payload value="suc" doc:name="Set Payload" doc:id="e98fca35-498d-499e-b0b0-c1b8da533216" />
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getemp" doc:id="3e3343a5-5ca6-4fa2-943b-95fffff6e974" >
+		<http:listener doc:name="Listener" doc:id="dcd94ed3-e485-49c4-baa1-38b71cc75bec" path="/get" config-ref="HTTP_Listener_config1"/>
+		<db:select doc:name="Select" doc:id="be1bf912-1eaa-4834-a5f4-baeb68485150" config-ref="Database_Config">
+			<db:sql ><![CDATA[Select * from Employee]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="542798d8-1e39-40cd-bdae-f97adf3d1dd9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="bd22ad23-c8cc-4633-8599-a0e268098807" message="success"/>
+	</flow>
+	<flow name="getempbyid" doc:id="18f125c2-195b-43de-b31d-20c820b4bf8c" >
+		<http:listener doc:name="Listener" doc:id="301fe997-bba6-435d-b0d7-aa25428bf871" config-ref="HTTP_Listener_config1" path="/id"/>
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable" doc:id="ba393cf7-bc6e-4ea4-b08d-e1080accf9aa" variableName="id"/>
+		<db:select doc:name="Select" doc:id="8315cf88-7316-488f-a200-6fec0f85e730" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from Employee where E_id =:id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"id": vars.id}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="fe4948b5-fe58-4310-8224-516349b8d0d7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="0108d23a-55df-4a2e-9b6d-187791961a27" />
+	</flow>
+	<flow name="postemploy" doc:id="c35a856b-be5d-45db-8077-e5f00257c76c" >
+		<http:listener doc:name="Listener" doc:id="c9e4c777-3cbf-463d-be58-a945a68187a2" config-ref="HTTP_Listener_config1" path="/post" allowedMethods="POST"/>
+		<db:insert doc:name="Insert" doc:id="def5f3b9-f5b6-4a8c-9cce-07b752097347" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO Employee values(:E_id,:E_NAME,:E_SALARY)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"E_id": payload.E_id,"E_NAME":payload.E_NAME,"E_SALARY":payload.E_SALARY}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="0b21deb2-bfb2-4e7a-99c4-fa845099a27f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="2195b6d9-3614-4e0f-80e2-beaf44b7cfa0" message="success"/>
 	</flow>
 </mule>

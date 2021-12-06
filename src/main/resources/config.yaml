@@ -1,0 +1,9 @@
+http:
+  port: "8081"
+
+db:
+  host: "remotemysql.com"
+  port: "3306"
+  username: "dpuMZ5gIM6"
+  password: "ptD6ESvTKv"
+  database: "dpuMZ5gIM6"
