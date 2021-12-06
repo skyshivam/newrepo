@@ -38,13 +38,13 @@
 				<configuration>
 				<cloudHubDeployment>
 				<uri>https://anypoint.mulesoft.com</uri>
-				<muleVersion>4.4.0</muleVersion>
-				<username>skydec</username>
-				<password>"Sky@api1888"</password>
-				<applicationName>cicd-api1888</applicationName>
-				<environment>Sandbox</environment>
-				<workers>1</workers>
-				<workerType>MICRO</workerType>
+				<muleVersion>${muleVersion}</muleVersion>
+				<username>${username}</username>
+				<password>${password}</password>
+				<applicationName>${applicationName}</applicationName>
+				<environment>${environment}</environment>
+				<workers>${workers}</workers>
+				<workerType>${workerType}</workerType>
 				<objectStoreV2>true</objectStoreV2>
 				</cloudHubDeployment>
 				</configuration>
