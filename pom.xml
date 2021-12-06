@@ -39,8 +39,8 @@
 				<cloudHubDeployment>
 				<uri>https://anypoint.mulesoft.com</uri>
 				<muleVersion>4.4.0</muleVersion>
-				<username>skysky</username>
-				<password>"SKY-a1888"</password>
+				<username>skydec</username>
+				<password>"Sky@api1888"</password>
 				<applicationName>cicd-api1888</applicationName>
 				<environment>Sandbox</environment>
 				<workers>1</workers>
